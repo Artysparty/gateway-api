@@ -1,6 +1,23 @@
-export const HotelsMock = [
+export interface IHotel {
+  id: string;
+  cities: string[];
+  name: string;
+  stars: number;
+  rooms: Room[]
+}
+
+export interface Room {
+  roomId: string;
+  cost: number;
+  isFree: boolean;
+  numberOfBeds: number;
+}
+
+export const HotelsMock: IHotel[] = [
   {
+    id: '1',
     name: 'Radisson',
+    cities: ['1', '2'],
     stars: 5,
     rooms: [
       {
@@ -25,7 +42,9 @@ export const HotelsMock = [
   },
 
   {
+    id: '2',
     name: 'FourSeasons',
+    cities: ['3', '4'],
     stars: 5,
     rooms: [
       {
@@ -50,7 +69,9 @@ export const HotelsMock = [
   },
 
   {
+    id: '3',
     name: 'Swisshotel',
+    cities: ['5', '6'],
     stars: 5,
     rooms: [
       {
@@ -75,34 +96,19 @@ export const HotelsMock = [
   },
 ];
 
-export interface Hotel {
-  name: string;
-  stars: number;
-  rooms: Room[]
-}
-
-export interface Room {
-  roomId: string;
-  cost: number;
-  isFree: boolean;
-  numberOfBeds: number;
-}
 class HotelService {
-  private hotels: Hotel[];
+  private hotels: IHotel[];
 
   constructor() {
     this.hotels = HotelsMock
   }
 
-  public addHotel(hotel: Hotel): void {
+  public addHotel(hotel: IHotel): void {
     this.hotels.push(hotel);
   }
 
-  public getAvailableHotelRooms(): Hotel[] {
-    return this.hotels
-    .filter(hotel => {
-      return hotel.rooms.some(room => room.isFree)
-    })
+  public getHotels(): IHotel[] {
+    return this.hotels;
   }
 }
 
@@ -112,10 +118,9 @@ const app = express();
 const service = new HotelService();
 
 app.get('/hotels', (req, res) => {
-  res.json(service.getAvailableHotelRooms());
+  res.json(service.getHotels());
 });
 
 app.listen(5001, () => {
-  console.log(service.getAvailableHotelRooms())
   console.log('Server listening port 5001');
 });
